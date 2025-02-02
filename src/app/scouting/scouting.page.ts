@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import Scout  from '../model/Scout';
 import { Router } from '@angular/router';
+import { doc, setDoc, collection } from "firebase/firestore";
+import { db } from '../../firebase/firebaseConfig';
+
 
 interface Button {
   label: string;
@@ -71,6 +74,17 @@ export class ScoutingPage implements OnInit {
     button.counter++;
   }
 
+  async salvarScout(scout: any) {
+    try {
+      const scoutsCollection = collection(db, "Scouts");
+      const novoScoutRef = doc(scoutsCollection);
+      await setDoc(novoScoutRef, scout);
+      console.log("Documento salvo com ID:", novoScoutRef.id);
+    } catch (error) {
+      console.error("Erro ao salvar scout:", error);
+    }
+  }
+
   endScouting() {
     console.log('Scouting ended');
     this.saqueAceCounter = this.cards[0].buttons[0].counter;
@@ -99,7 +113,32 @@ export class ScoutingPage implements OnInit {
     this.recepcaoAceCounter = this.cards[4].buttons[4].counter;
     
     const scout = new Scout(this.scoutingName, this.saqueAceCounter, this.saqueQuebraCounter, this.saqueNormalCounter, this.saqueErroCounter, this.bloqueioPontoCounter, this.bloqueioContinuidadeCounter, this.bloqueioErroCounter, this.ataquePontoCounter, this.ataquePlusCounter, this.ataqueMinusCounter, this.ataqueErroCounter, this.ataqueBloqueioCounter, this.contraAtaquePontoCounter, this.contraAtaqueContinuidadeCounter, this.contraAtaqueErroCounter, this.recepcaoPerfeitaCounter, this.recepcaoPlusCounter, this.recepcaoMinusCounter, this.recepcaoErroCounter, this.recepcaoAceCounter, this.dataAtual);
+    const scoutData = {
+      scoutingName: this.scoutingName,
+      saqueAceCounter: this.saqueAceCounter,
+      saqueQuebraCounter: this.saqueQuebraCounter,
+      saqueNormalCounter: this.saqueNormalCounter,
+      saqueErroCounter: this.saqueErroCounter,
+      bloqueioPontoCounter: this.bloqueioPontoCounter,
+      bloqueioContinuidadeCounter: this.bloqueioContinuidadeCounter,
+      bloqueioErroCounter: this.bloqueioErroCounter,
+      ataquePontoCounter: this.ataquePontoCounter,
+      ataquePlusCounter: this.ataquePlusCounter,
+      ataqueMinusCounter: this.ataqueMinusCounter,
+      ataqueErroCounter: this.ataqueErroCounter,
+      ataqueBloqueioCounter: this.ataqueBloqueioCounter,
+      contraAtaquePontoCounter: this.contraAtaquePontoCounter,
+      contraAtaqueContinuidadeCounter: this.contraAtaqueContinuidadeCounter,
+      contraAtaqueErroCounter: this.contraAtaqueErroCounter,
+      recepcaoPerfeitaCounter: this.recepcaoPerfeitaCounter,
+      recepcaoPlusCounter: this.recepcaoPlusCounter,
+      recepcaoMinusCounter: this.recepcaoMinusCounter,
+      recepcaoErroCounter: this.recepcaoErroCounter,
+      recepcaoAceCounter: this.recepcaoAceCounter,
+      dataAtual: this.dataAtual
+    };
     console.log(scout);
+    this.salvarScout(scoutData);
     this.router.navigate(['/home']);
   }
 }
